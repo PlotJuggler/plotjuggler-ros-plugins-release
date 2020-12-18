@@ -1,1 +1,1 @@
-{"trim": "", "base": "ce26ec3", "trimbase": "", "parent": "debian/foxy/plotjuggler_ros", "previous": "61fafd4"}
+{"base": "ed322de", "parent": "debian/foxy/plotjuggler_ros", "previous": "1ddeb7a", "trim": "", "trimbase": ""}
