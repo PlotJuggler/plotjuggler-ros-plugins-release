@@ -1,0 +1,39 @@
+ros-foxy-plotjuggler-ros (1.0.3-6focal) focal; urgency=high
+
+  * fix bug #387 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/387> in Plotjuggler repo
+  * Merge pull request #3 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/3> from kefrobotics/development
+    Add diagnostic_msgs as ROS2 dependency in CMakeLists.txt files
+  * Add diagnostic_msgs as ROS2 dependency in CMakeLists.txt files
+  * Contributors: Davide Faconti, Paul Frivold
+
+ -- Davide Faconti <davide.faconti@gmail.com>  Tue, 19 Jan 2021 23:00:00 -0000
+
+ros-foxy-plotjuggler-ros (1.0.2-6focal) focal; urgency=high
+
+  * Merge branch 'development' of https://github.com/PlotJuggler/plotjuggler-ros-plugins into development
+  * fix compilation in ros2
+  * Contributors: Davide Faconti
+
+ -- Davide Faconti <davide.faconti@gmail.com>  Tue, 29 Dec 2020 23:00:00 -0000
+
+ros-foxy-plotjuggler-ros (1.0.1-6focal) focal; urgency=high
+
+  * Added TF messages to the parser (issue #366 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/366>)
+  * Update README.md
+  * Update README.md
+  * Merge pull request #1 <https://github.com/PlotJuggler/plotjuggler-ros-plugins/issues/1> from uhobeike/development
+    Made it possible to install
+  * Made it possible to install
+  * fix includes
+  * Contributors: Davide Faconti, davide, uhobeike
+
+ -- Davide Faconti <davide.faconti@gmail.com>  Thu, 17 Dec 2020 23:00:00 -0000
+
+ros-foxy-plotjuggler-ros (1.0.0-6focal) focal; urgency=high
+
+  * Initial commit
+  * Contributors: Davide Faconti
+
+ -- Davide Faconti <davide.faconti@gmail.com>  Sun, 22 Nov 2020 23:00:00 -0000
+
+
