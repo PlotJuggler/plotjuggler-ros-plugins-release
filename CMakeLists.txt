@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
 
-cmake_policy(SET CMP0048 OLD)
 PROJECT(plotjuggler_ros)
 
 # http://answers.ros.org/question/230877/optionally-build-a-package-with-catkin/
@@ -43,6 +42,7 @@ elseif( DEFINED ENV{AMENT_PREFIX_PATH})
     find_package(sensor_msgs REQUIRED)
     find_package(geometry_msgs REQUIRED)
     find_package(nav_msgs REQUIRED)
+    find_package(diagnostic_msgs REQUIRED)
     find_package(fastcdr REQUIRED)
     find_package(Boost REQUIRED)
     find_package(plotjuggler_msgs REQUIRED)
