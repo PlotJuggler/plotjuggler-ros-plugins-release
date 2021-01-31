@@ -16,7 +16,7 @@ ROS is supported through external plugins that can be found in this [repository]
 
 Install PlotJuggler and its ROS plugins with:
 
-    sudo apt install ros-${ROS_DISTRO}-plotjuggler-ros
+    sudo apt install ros-${ROS_DISTRO}-plotjuggler
     
 And launch it with:
     
@@ -29,7 +29,7 @@ Create a catkin workspace and clone the repositories:
      mkdir -p ~/ws_plotjuggler/src
      cd ~/ws_plotjuggler/src
      git clone https://github.com/PlotJuggler/plotjuggler_msgs.git
-     git clone https://github.com/PlotJuggler/PlotJuggler3.git
+     git clone https://github.com/facontidavide/PlotJuggler.git
      git clone https://github.com/PlotJuggler/plotjuggler-ros-plugins.git
      
 Now, it is time to compile:
