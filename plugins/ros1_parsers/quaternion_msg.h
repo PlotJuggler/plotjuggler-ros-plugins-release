@@ -5,17 +5,6 @@
 
 class QuaternionMsgParser : public BuiltinMessageParser<geometry_msgs::Quaternion>
 {
-
-private:
-  std::vector<PJ::PlotData*> _data;
-  double _pitch_offset;
-  double _roll_offset;
-  double _yaw_offset;
-
-  double _prev_pitch;
-  double _prev_roll;
-  double _prev_yaw;
-
 public:
   QuaternionMsgParser(const std::string& topic_name, PJ::PlotDataMapRef& plot_data)
     : BuiltinMessageParser<geometry_msgs::Quaternion>(topic_name, plot_data),
@@ -26,18 +15,23 @@ public:
       _prev_roll(0.0),
       _prev_yaw(0.0)
   {
-    _data.push_back(&getSeries(topic_name + "/x"));
-    _data.push_back(&getSeries(topic_name + "/y"));
-    _data.push_back(&getSeries(topic_name + "/z"));
-    _data.push_back(&getSeries(topic_name + "/w"));
-
-    _data.push_back(&getSeries(topic_name + "/roll_deg"));
-    _data.push_back(&getSeries(topic_name + "/pitch_deg"));
-    _data.push_back(&getSeries(topic_name + "/yaw_deg"));
   }
 
   void parseMessageImpl(const geometry_msgs::Quaternion& msg, double& timestamp) override
   {
+    if( !_initialized )
+    {
+      _initialized = true;
+      _data.push_back(&getSeries(_topic_name + "/x"));
+      _data.push_back(&getSeries(_topic_name + "/y"));
+      _data.push_back(&getSeries(_topic_name + "/z"));
+      _data.push_back(&getSeries(_topic_name + "/w"));
+
+      _data.push_back(&getSeries(_topic_name + "/roll_deg"));
+      _data.push_back(&getSeries(_topic_name + "/pitch_deg"));
+      _data.push_back(&getSeries(_topic_name + "/yaw_deg"));
+    }
+
     _data[0]->pushBack({ timestamp, msg.x });
     _data[1]->pushBack({ timestamp, msg.y });
     _data[2]->pushBack({ timestamp, msg.z });
@@ -111,5 +105,17 @@ public:
     _data[5]->pushBack({ timestamp, RAD_TO_DEG * (pitch + _pitch_offset) });
     _data[6]->pushBack({ timestamp, RAD_TO_DEG * (yaw + _yaw_offset)});
   }
+
+ private:
+  std::vector<PJ::PlotData*> _data;
+  double _pitch_offset;
+  double _roll_offset;
+  double _yaw_offset;
+
+  double _prev_pitch;
+  double _prev_roll;
+  double _prev_yaw;
+
+  bool _initialized = false;
 
 };
