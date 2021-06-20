@@ -2,6 +2,22 @@
 Changelog for package plotjuggler_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.5.0 (2021-06-20)
+------------------
+* massive changes
+  - include consistent timestamp (suggested by @doisyg )
+  - lazy initialization in parsers.
+  - reusable Header parser
+  - string field added
+* add lazy parser inizialization and string field to ROS1
+* Contributors: Davide Faconti
+
+1.4.1 (2021-06-18)
+------------------
+* remove obsolate headers
+* forget to install launch file for ROS1
+* Contributors: Davide Faconti, Kei Okada
+
 1.3.0 (2021-06-12)
 ------------------
 * use std::any
