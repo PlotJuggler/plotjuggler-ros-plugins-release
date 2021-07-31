@@ -1,0 +1,12 @@
+Source: ros-rolling-plotjuggler-ros
+Section: misc
+Priority: optional
+Maintainer: Davide Faconti <davide.faconti@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), binutils-dev, libboost-all-dev, libqt5svg5-dev, libqt5websockets5-dev, qtbase5-dev, ros-rolling-ament-cmake, ros-rolling-diagnostic-msgs, ros-rolling-fastcdr, ros-rolling-geometry-msgs, ros-rolling-nav-msgs, ros-rolling-plotjuggler, ros-rolling-plotjuggler-msgs, ros-rolling-rclcpp, ros-rolling-rcpputils, ros-rolling-rosbag2, ros-rolling-rosbag2-transport, ros-rolling-sensor-msgs, ros-rolling-tf2-msgs, ros-rolling-tf2-ros, ros-rolling-ros-workspace
+Homepage: https://github.com/facontidavide/PlotJuggler
+Standards-Version: 3.9.2
+
+Package: ros-rolling-plotjuggler-ros
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, binutils-dev, libboost-all-dev, libqt5svg5-dev, libqt5websockets5-dev, qtbase5-dev, ros-rolling-diagnostic-msgs, ros-rolling-fastcdr, ros-rolling-geometry-msgs, ros-rolling-nav-msgs, ros-rolling-plotjuggler, ros-rolling-plotjuggler-msgs, ros-rolling-rclcpp, ros-rolling-rcpputils, ros-rolling-rosbag2, ros-rolling-rosbag2-transport, ros-rolling-sensor-msgs, ros-rolling-tf2-msgs, ros-rolling-tf2-ros, ros-rolling-ros-workspace
+Description: PlotJuggler plugin for ROS
