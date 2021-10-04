@@ -6,7 +6,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QProgressDialog>
-#include "rclcpp/generic_subscription.hpp"
+#include "ros2_parsers/generic_subscription.hpp"
 
 DataStreamROS2::DataStreamROS2() :
     DataStreamer(),
@@ -20,7 +20,7 @@ DataStreamROS2::DataStreamROS2() :
   _context = std::make_shared<rclcpp::Context>();
   _context->init(0, nullptr);
 
-  auto exec_args = rclcpp::ExecutorOptions();
+  auto exec_args = rclcpp::executor::ExecutorArgs();
   exec_args.context = _context;
   _executor = std::make_unique<rclcpp::executors::MultiThreadedExecutor>(exec_args, 2);
 
@@ -198,11 +198,10 @@ void DataStreamROS2::subscribeToTopic(const std::string& topic_name, const std::
   // double subscription, latching or not
   for (bool transient : { true, false })
   {
-    auto subscription = _node->create_generic_subscription(topic_name,
-                                                           topic_type,
-                                                           transient,
-                                                           bound_callback);
-
+    auto subscription = std::make_shared<rosbag2_transport::GenericSubscription>(
+          _node->get_node_base_interface().get(),
+          *_parser->typeSupport(topic_name),
+          topic_name, transient, bound_callback);
     _subscriptions[topic_name + (transient ? "/transient_" : "")] = subscription;
     _node->get_node_topics_interface()->add_subscription(subscription, nullptr);
   }
