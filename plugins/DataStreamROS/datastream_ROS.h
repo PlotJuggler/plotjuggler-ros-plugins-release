@@ -50,10 +50,6 @@ private:
 
   void subscribe();
 
-  void saveDefaultSettings();
-
-  void loadDefaultSettings();
-
   bool _running;
   bool _first_warning;
 
@@ -73,13 +69,15 @@ private:
 
   QAction* _action_saveIntoRosbag;
 
+  QAction* _action_saveAny;
+
   std::vector<QAction*> _available_actions;
 
   std::map<std::string, int> _msg_index;
 
-  DialogSelectRosTopics::Configuration _config;
+  RosParserConfig _config;
 
-  std::unique_ptr<CompositeParser> _parser;
+  std::unique_ptr<RosCompositeParser> _parser;
 
   QTimer* _periodic_timer;
 

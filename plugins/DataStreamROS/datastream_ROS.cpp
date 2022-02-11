@@ -33,12 +33,29 @@ DataStreamROS::DataStreamROS() : DataStreamer(), _node(nullptr)
   _periodic_timer = new QTimer();
   connect(_periodic_timer, &QTimer::timeout, this, &DataStreamROS::timerCallback);
 
-  loadDefaultSettings();
+  {
+    QSettings settings;
+    _config.loadFromSettings(settings, "DataStreamROS");
+  }
 
   _action_saveIntoRosbag = new QAction(QString("Save cached value in a rosbag"));
-  connect(_action_saveIntoRosbag, &QAction::triggered, this, [this]() { DataStreamROS::saveIntoRosbag(); });
+  connect(_action_saveIntoRosbag, &QAction::changed, this, [this]() {
+    DataStreamROS::saveIntoRosbag();
+  });
+
+  _action_saveAny = new QAction(QString("Store messages in memory for Re-publishing"));
+  connect(_action_saveAny, &QAction::triggered, this, [this]() {
+    QSettings settings;
+    settings.value("DataStreamROS/storemessagesInMemory", _action_saveAny->isChecked() );
+  });
+  _action_saveAny->setCheckable( true );
+
+  QSettings settings;
+  bool store_msg = settings.value("DataStreamROS/storemessagesInMemory", false).toBool();
+  _action_saveAny->setChecked( store_msg );
 
   _available_actions.push_back( _action_saveIntoRosbag );
+  _available_actions.push_back( _action_saveAny );
 }
 
 void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr& msg, const std::string& topic_name)
@@ -68,14 +85,15 @@ void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr
   ros::serialization::OStream stream(buffer.data(), buffer.size());
   msg->write(stream);
 
-  _parser->setUseHeaderStamp(_config.use_header_stamp);
-
   double msg_time = ros::Time::now().toSec();
   if (msg_time == 0)
   {
     // corner case: use_sim_time == true but topic /clock is not published
     msg_time = ros::WallTime::now().toSec();
-    _parser->setUseHeaderStamp(false);
+
+    auto tmp_config = _config;
+    tmp_config.use_header_stamp = false;
+    _parser->setConfig(tmp_config);
   }
 
   // time wrapping may happen using use_sim_time = true and
@@ -116,8 +134,10 @@ void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr
 
   const std::string prefixed_topic_name = _prefix + topic_name;
 
+  bool save_any = _action_saveAny->isChecked();
   // adding raw serialized msg for future uses.
   // do this before msg_time normalization
+  if( save_any )
   {
     auto plot_pair = _user_defined_buffers.find(prefixed_topic_name);
     if (plot_pair == _user_defined_buffers.end())
@@ -132,6 +152,7 @@ void DataStreamROS::topicCallback(const RosIntrospection::ShapeShifter::ConstPtr
   }
 
   //------------------------------
+  if( save_any )
   {
     int& index = _msg_index[topic_name];
     index++;
@@ -196,7 +217,7 @@ void DataStreamROS::timerCallback()
         emit closed();
         return;
       }
-      _parser.reset( new CompositeParser(dataMap()) );
+      _parser.reset( new RosCompositeParser(dataMap()) );
       subscribe();
 
       _running = true;
@@ -290,9 +311,9 @@ void DataStreamROS::subscribe()
 {
   _subscribers.clear();
 
-  for (int i = 0; i < _config.selected_topics.size(); i++)
+  for (int i = 0; i < _config.topics.size(); i++)
   {
-    const std::string topic_name = _config.selected_topics[i].toStdString();
+    const std::string topic_name = _config.topics[i].toStdString();
     boost::function<void(const RosIntrospection::ShapeShifter::ConstPtr&)> callback;
     callback = [this, topic_name](const RosIntrospection::ShapeShifter::ConstPtr& msg) -> void {
       this->topicCallback(msg, topic_name);
@@ -322,7 +343,7 @@ bool DataStreamROS::start(QStringList* selected_datasources)
     std::lock_guard<std::mutex> lock(mutex());
     dataMap().numeric.clear();
     dataMap().user_defined.clear();
-    _parser.reset( new CompositeParser(dataMap()) );
+    _parser.reset( new RosCompositeParser(dataMap()) );
   }
 
   using namespace RosIntrospection;
@@ -357,26 +378,17 @@ bool DataStreamROS::start(QStringList* selected_datasources)
   _config = dialog.getResult();
   timer.stop();
 
-  if (res != QDialog::Accepted || _config.selected_topics.empty())
+  if (res != QDialog::Accepted || _config.topics.empty())
   {
     return false;
   }
 
-  saveDefaultSettings();
-
-//  if (_config.use_renaming_rules)
-//  {
-//    _parser->addRules(RuleEditing::getRenamingRules());
-//  }
-
-  if (_config.discard_large_arrays)
   {
-    _parser->setMaxArrayPolicy(DISCARD_LARGE_ARRAYS, _config.max_array_size);
+    QSettings settings;
+    _config.saveToSettings(settings, "DataStreamROS");
   }
-  else
-  {
-    _parser->setMaxArrayPolicy(KEEP_LARGE_ARRAYS, _config.max_array_size);
-  }
+
+  _parser->setConfig(_config);
 
   //-------------------------
   subscribe();
@@ -426,39 +438,13 @@ DataStreamROS::~DataStreamROS()
 
 bool DataStreamROS::xmlSaveState(QDomDocument& doc, QDomElement& plugin_elem) const
 {
-  QDomElement stamp_elem = doc.createElement("use_header_stamp");
-  stamp_elem.setAttribute("value", _config.use_header_stamp ? "true" : "false");
-  plugin_elem.appendChild(stamp_elem);
-
-  QDomElement rename_elem = doc.createElement("use_renaming_rules");
-  rename_elem.setAttribute("value", _config.use_renaming_rules ? "true" : "false");
-  plugin_elem.appendChild(rename_elem);
-
-  QDomElement discard_elem = doc.createElement("discard_large_arrays");
-  discard_elem.setAttribute("value", _config.discard_large_arrays ? "true" : "false");
-  plugin_elem.appendChild(discard_elem);
-
-  QDomElement max_elem = doc.createElement("max_array_size");
-  max_elem.setAttribute("value", QString::number(_config.max_array_size));
-  plugin_elem.appendChild(max_elem);
-
+  _config.xmlSaveState(doc, plugin_elem);
   return true;
 }
 
 bool DataStreamROS::xmlLoadState(const QDomElement& parent_element)
 {
-  QDomElement stamp_elem = parent_element.firstChildElement("use_header_stamp");
-  _config.use_header_stamp = (stamp_elem.attribute("value") == "true");
-
-  QDomElement rename_elem = parent_element.firstChildElement("use_renaming_rules");
-  _config.use_renaming_rules = (rename_elem.attribute("value") == "true");
-
-  QDomElement discard_elem = parent_element.firstChildElement("discard_large_arrays");
-  _config.discard_large_arrays = (discard_elem.attribute("value") == "true");
-
-  QDomElement max_elem = parent_element.firstChildElement("max_array_size");
-  _config.max_array_size = max_elem.attribute("value").toInt();
-
+  _config.xmlLoadState(parent_element);
   return true;
 }
 
@@ -467,23 +453,3 @@ const std::vector<QAction *> &DataStreamROS::availableActions()
   return _available_actions;
 }
 
-void DataStreamROS::saveDefaultSettings()
-{
-  QSettings settings;
-
-  settings.setValue("DataStreamROS/default_topics", _config.selected_topics);
-  settings.setValue("DataStreamROS/use_renaming", _config.use_renaming_rules);
-  settings.setValue("DataStreamROS/use_header_stamp", _config.use_header_stamp);
-  settings.setValue("DataStreamROS/max_array_size", (int)_config.max_array_size);
-  settings.setValue("DataStreamROS/discard_large_arrays", _config.discard_large_arrays);
-}
-
-void DataStreamROS::loadDefaultSettings()
-{
-  QSettings settings;
-  _config.selected_topics = settings.value("DataStreamROS/default_topics", false).toStringList();
-  _config.use_header_stamp = settings.value("DataStreamROS/use_header_stamp", false).toBool();
-  _config.use_renaming_rules = settings.value("DataStreamROS/use_renaming", true).toBool();
-  _config.max_array_size = settings.value("DataStreamROS/max_array_size", 100).toInt();
-  _config.discard_large_arrays = settings.value("DataStreamROS/discard_large_arrays", true).toBool();
-}
