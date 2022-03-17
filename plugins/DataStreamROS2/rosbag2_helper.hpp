@@ -38,14 +38,14 @@ inline rclcpp::QoS adapt_request_to_offers(
   if (reliability_reliable_endpoints_count == num_endpoints) {
     request_qos.reliable();
   } else {
-    if (reliability_reliable_endpoints_count > 0) {
-      ROSBAG2_TRANSPORT_LOG_WARN_STREAM( topic_name <<
-          ": some, but not all, publishers on topic "
-          "are offering RMW_QOS_POLICY_RELIABILITY_RELIABLE. "
-          "Falling back to RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT "
-          "as it will connect to all publishers. "
-          "Some messages from Reliable publishers could be dropped.");
-    }
+//    if (reliability_reliable_endpoints_count > 0) {
+//      ROSBAG2_TRANSPORT_LOG_WARN_STREAM( topic_name <<
+//          ": some, but not all, publishers on topic "
+//          "are offering RMW_QOS_POLICY_RELIABILITY_RELIABLE. "
+//          "Falling back to RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT "
+//          "as it will connect to all publishers. "
+//          "Some messages from Reliable publishers could be dropped.");
+//    }
     request_qos.best_effort();
   }
 
@@ -54,14 +54,14 @@ inline rclcpp::QoS adapt_request_to_offers(
   if (durability_transient_local_endpoints_count == num_endpoints) {
     request_qos.transient_local();
   } else {
-    if (durability_transient_local_endpoints_count > 0) {
-      ROSBAG2_TRANSPORT_LOG_WARN_STREAM(topic_name <<
-          ": some, but not all, publishers on topic "
-          "are offering RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL. "
-          "Falling back to RMW_QOS_POLICY_DURABILITY_VOLATILE "
-          "as it will connect to all publishers. "
-          "Previously-published latched messages will not be retrieved.");
-    }
+//    if (durability_transient_local_endpoints_count > 0) {
+//      ROSBAG2_TRANSPORT_LOG_WARN_STREAM(topic_name <<
+//          ": some, but not all, publishers on topic "
+//          "are offering RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL. "
+//          "Falling back to RMW_QOS_POLICY_DURABILITY_VOLATILE "
+//          "as it will connect to all publishers. "
+//          "Previously-published latched messages will not be retrieved.");
+//    }
     request_qos.durability_volatile();
   }
   // Policy: deadline
