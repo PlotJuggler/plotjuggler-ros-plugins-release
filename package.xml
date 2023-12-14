@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
     <name>plotjuggler_ros</name>
-    <version>1.7.3</version>
+    <version>2.0.0</version>
     <description>PlotJuggler plugin for ROS</description>
 
     <maintainer email="davide.faconti@gmail.com">Davide Faconti</maintainer>
@@ -17,7 +17,7 @@
     <depend condition="$ROS_VERSION == 1">rosbag_storage</depend>
     <depend condition="$ROS_VERSION == 1">roscpp</depend>
     <depend condition="$ROS_VERSION == 1">roscpp_serialization</depend>
-    <depend condition="$ROS_VERSION == 1">tf</depend>
+    <depend condition="$ROS_VERSION == 1">ros_type_introspection</depend>
 
     <!-- ROS2 dependencies -->
     <buildtool_depend condition="$ROS_VERSION == 2">ament_cmake</buildtool_depend>
@@ -26,16 +26,10 @@
     <depend condition="$ROS_VERSION == 2">rcpputils</depend>
     <depend condition="$ROS_VERSION == 2">rosbag2</depend>
     <depend condition="$ROS_VERSION == 2">rosbag2_transport</depend>
-    <depend condition="$ROS_VERSION == 2">fastcdr</depend>
 
-    <depend>diagnostic_msgs</depend>
-    <depend>sensor_msgs</depend>
-    <depend>geometry_msgs</depend>
-    <depend>nav_msgs</depend>
+    <depend>plotjuggler</depend>
     <depend>tf2_ros</depend>
     <depend>tf2_msgs</depend>
-    <depend>plotjuggler_msgs</depend>
-    <depend>plotjuggler</depend>
 
     <!-- common dependancies -->
     <depend>qtbase5-dev</depend>
