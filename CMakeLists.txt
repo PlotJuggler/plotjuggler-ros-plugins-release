@@ -2,8 +2,11 @@ cmake_minimum_required(VERSION 3.5)
 
 PROJECT(plotjuggler_ros)
 
+find_package(ament_cmake QUIET)
+find_package(catkin QUIET)
+
 # http://answers.ros.org/question/230877/optionally-build-a-package-with-catkin/
-if( CATKIN_DEVEL_PREFIX OR catkin_FOUND OR CATKIN_BUILD_BINARY_PACKAGE)
+if( catkin_FOUND OR CATKIN_DEVEL_PREFIX OR CATKIN_BUILD_BINARY_PACKAGE)
     set(COMPILING_WITH_CATKIN 1)
 
     message(STATUS "---------------------------------------------------------------------")
@@ -14,13 +17,8 @@ if( CATKIN_DEVEL_PREFIX OR catkin_FOUND OR CATKIN_BUILD_BINARY_PACKAGE)
         rosbag_storage
         roscpp
         roscpp_serialization
-        tf
+        ros_type_introspection
         tf2_ros
-        diagnostic_msgs
-        nav_msgs
-        sensor_msgs
-        plotjuggler_msgs
-       #  pal_statistics_msgs
         plotjuggler )
 
     find_package(catkin REQUIRED COMPONENTS ${ROS_DEPENDENCIES} )
@@ -28,29 +26,21 @@ if( CATKIN_DEVEL_PREFIX OR catkin_FOUND OR CATKIN_BUILD_BINARY_PACKAGE)
     catkin_package(
         CATKIN_DEPENDS ${ROS_DEPENDENCIES}  )
 
-elseif( DEFINED ENV{AMENT_PREFIX_PATH})
+elseif( ament_cmake_FOUND )
     set(COMPILING_WITH_AMENT 1)
     
     message(STATUS "---------------------------------------------------------------------")
     message(STATUS "PlotJuggler is being built using AMENT. ROS2 plugins will be compiled")
     message(STATUS "---------------------------------------------------------------------")
 
-    find_package(ament_cmake REQUIRED)
     find_package(rclcpp REQUIRED)
     find_package(rcpputils REQUIRED)
     find_package(rosbag2 REQUIRED)
     find_package(rosbag2_transport REQUIRED)
-    find_package(sensor_msgs REQUIRED)
-    find_package(geometry_msgs REQUIRED)
-    find_package(nav_msgs REQUIRED)
-    find_package(diagnostic_msgs REQUIRED)
-    find_package(fastcdr REQUIRED)
     find_package(Boost REQUIRED)
-    find_package(plotjuggler_msgs REQUIRED)
     find_package(tf2_msgs REQUIRED)
     find_package(tf2_ros REQUIRED)
     find_package(plotjuggler REQUIRED)
-   #  find_package(pal_statistics_msgs REQUIRED)
 
 else()
     message(FATAL_ERROR "PlotJuggler is being WITHOUT any ROS support")
@@ -144,7 +134,7 @@ endif()
 
 #############################################################
 
-add_subdirectory( plugins )
+add_subdirectory( src )
 
 if(COMPILING_WITH_AMENT)
     ament_package()
