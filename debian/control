@@ -1,0 +1,12 @@
+Source: ros-noetic-plotjuggler-ros
+Section: misc
+Priority: optional
+Maintainer: Davide Faconti <davide.faconti@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), binutils-dev, libboost-all-dev, libqt5svg5-dev, libqt5websockets5-dev, qtbase5-dev, ros-noetic-catkin, ros-noetic-plotjuggler, ros-noetic-ros-type-introspection, ros-noetic-rosbag-storage, ros-noetic-roscpp, ros-noetic-roscpp-serialization, ros-noetic-tf2-msgs, ros-noetic-tf2-ros
+Homepage: https://github.com/facontidavide/PlotJuggler
+Standards-Version: 3.9.2
+
+Package: ros-noetic-plotjuggler-ros
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, binutils-dev, libboost-all-dev, libqt5svg5-dev, libqt5websockets5-dev, qtbase5-dev, ros-noetic-plotjuggler, ros-noetic-ros-type-introspection, ros-noetic-rosbag-storage, ros-noetic-roscpp, ros-noetic-roscpp-serialization, ros-noetic-tf2-msgs, ros-noetic-tf2-ros
+Description: PlotJuggler plugin for ROS
